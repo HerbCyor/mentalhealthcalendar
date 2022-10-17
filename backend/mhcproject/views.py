@@ -1,7 +1,8 @@
 from django.shortcuts import render,get_object_or_404,redirect
 from calendarapp.models import Calendar,Day
 from django.contrib.auth import authenticate,login
-
+from .forms import NewUserForm
+from django.contrib import messages
 def index(request):
     return render(request, 'index.html')
 
@@ -14,9 +15,27 @@ def login_user(request):
         
         if user is not None:
             login(request,user)
-            return redirect('calendar-view')
-            
+            return redirect('calendar')
+
     return redirect('index')
+
+def register_user(request):
+    message = ""
+    if request.method == 'POST':
+        form = NewUserForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request,user)
+            message = messages.success(request, "Registration successful." )
+            return redirect('calendar')
+        message = messages.error(request, "Unsuccessful registration. Invalid information." )
+    
+    form = NewUserForm()
+    context = {
+        'register_form':form,
+        'messages':message,
+    }
+    return render(request,"register.html", context)
 
 def calendar(request):
     

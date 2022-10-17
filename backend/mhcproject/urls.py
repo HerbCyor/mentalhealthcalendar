@@ -23,5 +23,6 @@ urlpatterns = [
     path("calendar", views.calendar, name='calendar'),
     path("newday", views.createDay,name='create-day'),
     path("api/", include('calendarapp.urls')),
-    path("login", views.login_user, name='login-user')
+    path("login", views.login_user, name='login-user'),
+    path("register",views.register_user,name='register-user'),
 ]

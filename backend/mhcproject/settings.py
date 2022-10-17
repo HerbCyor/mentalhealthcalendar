@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "calendarapp",
     "rest_framework",
+    "crispy_forms",
 ]
 
 MIDDLEWARE = [
