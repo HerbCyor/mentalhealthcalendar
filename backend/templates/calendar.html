@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+	<section class="ftco-section">
+		<div class="container">
+			<div class="row justify-content-center">
+				<div class="col-md-6 text-center mb-5">
+					<h2 class="heading-section">{{calendar.name}} Calendar</h2>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="calendar calendar-first" id="calendar_first">
+				    <div class="calendar_header">
+				        <button class="switch-month switch-left"> <i class="fa fa-chevron-left"></i></button>
+				         <h2 class="test_class"></h2>
+				        <button class="switch-month switch-right"> <i class="fa fa-chevron-right"></i></button>
+				    </div>
+				    <div class="calendar_weekdays"></div>
+				    <div class="calendar_content"></div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="nana col-md-12">
+					
+					<form method="post" action="{% url 'create-day' %} ">
+						{% csrf_token %}
+						<label for="date">Day:</label>
+						<input name="date">
+						<input name="calendar" value="{{ calendar.id }}" hidden>
+						<h5>Mood Score</h5>
+						<input type="radio" name="mood_score" id="mood_score_0" value="0">
+						<label for="mood_score_0">0</label>
+						<input type="radio" name="mood_score" id="mood_score_1" value="1">
+						<label for="mood_score_2">1</label>
+						<input type="radio" name="mood_score" id="mood_score_2" value="2">
+						<label for="mood_score_1">2</label>
+						<input type="radio" name="mood_score" id="mood_score_3" value="3">
+						<label for="mood_score_2">3</label>
+						<input type="radio" name="mood_score" id="mood_score_4" value="4">
+						<label for="mood_score_4">4</label>
+						<input type="radio" name="mood_score" id="mood_score_5" value="5">
+						<label for="mood_score_5">5</label>
+						<br>
+						<label for="comments">Comments</label>
+						<textarea name="comments"></textarea><br>
+						<button class="btn btn-primary" type="submit">Submit</button></form>
+				</div>
+			</div>
+		</div>
+		
+	</section>
+	
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+  	<script src="{% static 'js/popper.js' %}"></script>
+  	<script src="{% static 'js/bootstrap.min.js' %}"></script>
+  	<script src="{% static 'js/main.js' %}"></script>
+	<script>
+		const colors = {
+				0:"gray",
+				1:"red",
+				2:"orange",
+				3:"yellow",
+				4:"green",
+				5:"blue"
+			}
+		let api_data = []
+		function getDaysApi(){
+			const api_url = "{% url 'days-api' calendar.id %}" 
+			$.ajax({
+					type: "GET",
+					dataType: "json",
+					url: api_url,
+					contentType: "application/json",
+					success: function (data) {
+						api_data = data;
+					}})
+		}
+		
+		function fillColor(data){
+		
+			for (var i = 0; i<data.length;i++){
+				const day = data[i]
+				const day_id = "#" + day.date
+				$(day_id).css("background-color",colors[day.mood_score.toString()]);
+				
+		}}
+
+	
+		getDaysApi()
+		$(window).on("load", function(){
+			
+			fillColor(api_data)
+		});
+
+		$(".calendar_content").on('click', function () {
+			
+			fillColor(api_data)			
+		});
+		$(document).on("click", function(event){
+			var clicked = event.target
+			var selected_day = api_data.filter(function (entry) {return entry.date === clicked.id})[0]
+			if ($(clicked).hasClass("past-date") || $(clicked).hasClass('today')){
+				$("input[name='date']").val(clicked.id)
+				if(selected_day){
+					$("textarea[name='comments']").val(selected_day.comments)
+					
+					$("#mood_score_" + selected_day.mood_score).prop("checked",true)
+				} else {
+					$("textarea[name='comments']").val("")
+					$("#mood_score_5").prop("checked",true)
+				}
+				
+			}});
+			
+	</script>
+{% endblock %}

@@ -1,14 +1,36 @@
 from django.shortcuts import render,get_object_or_404,redirect
 from calendarapp.models import Calendar,Day
+from django.contrib.auth import authenticate,login
 
 def index(request):
-    calendar = Calendar.objects.all()[0]
+    return render(request, 'index.html')
+
+def login_user(request):
+    
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        user = authenticate(request, username=username, password=password)
+        
+        if user is not None:
+            login(request,user)
+            return redirect('calendar-view')
+            
+    return redirect('index')
+
+def calendar(request):
+    
+    if not request.user.is_authenticated:
+        return redirect('login-user')
+
+    calendar = get_object_or_404(Calendar, user=request.user)
     days = Day.objects.filter(calendar=calendar)
     context = {
         'calendar' : calendar,
-        'days' : days[1].__dict__
+        'days' : days
     }
-    return render(request,"index.html",context)
+    
+    return render(request,"calendar.html",context)
 
 def createDay(request):
 
@@ -29,4 +51,4 @@ def createDay(request):
             )
             new_day.save()
         
-    return redirect('index')
+    return redirect('calendar')
