@@ -124,20 +124,20 @@
 
 		
 		function getStatisticsFromAPI(){
-			let statistics_api_url = "127.0.0.1:3000/daystats/1"
+			let statistics_api_url = "{{statistics_api_url}}" + "{{ calendar.id }}"
 			let statistics = {}
-			$.get(statistics_api_url).done(function(data){
-				console.log(data)
+			$.ajax({
+					type: "GET",
+					url: statistics_api_url,
+					success: function (data) {
+						$(".statistics-container").html(data.toString())
+						console.log(data);
+						}
 			})
+			return statistics
 
 		}
 
-		function populateStatistic(statistics){
-			$(".statistics-container").html(
-				statistics
-				
-			)
-		}
 		//solution for auto populating the colors into the calendar (it works by resizing the div)
 		// found on http://www.backalleycoder.com/2013/03/18/cross-browser-event-based-element-resize-detection/
 		(function(){
