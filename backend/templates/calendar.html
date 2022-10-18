@@ -130,7 +130,14 @@
 					type: "GET",
 					url: statistics_api_url,
 					success: function (data) {
-						$(".statistics-container").html(data.toString())
+						$(".statistics-container").html(
+							"<p>Entries: " + data.days_checked + " days</p>" +
+							"<p>Mean Mood Score: " +data.mean_mood_score + "</p>" +
+							"<p>Days in the worst mood : " +data.min_mood_score_days.length + "</p>" +
+							"<p>Days in the best mood : " +data.max_mood_score_days.length + "</p>" +
+							"<p>Biggest streak of good days: " +data.max_sequence_high_mood.length + "</p>" +
+							"<p>Biggest streak of bad days: " + data.max_sequence_low_mood.length + "</p>")
+								
 						console.log(data);
 						}
 			})
