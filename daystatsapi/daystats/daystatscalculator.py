@@ -1,6 +1,6 @@
 from typing import List, Dict
 from daystats.day import Day
-
+from datetime import datetime
 
 class DayStatsCalculator:
     def __init__(self) -> None:
@@ -18,7 +18,7 @@ class DayStatsCalculator:
             result = sum(score_list) / len(score_list)
         except (ZeroDivisionError):
             result = 0
-        return result
+        return float("{:.2f}".format(result))
 
     def minMoodScoreDays(self):
         min_score = min([getattr(day, "mood_score") for day in self.list_of_days])
@@ -45,7 +45,7 @@ class DayStatsCalculator:
         """
         result = []
         temp_res = []
-        sorted_list_of_days = sorted(self.list_of_days, key=lambda x: x.date)
+        sorted_list_of_days = sorted(self.list_of_days, key=lambda date: datetime.strptime(date.date,"%Y-%m-%d"))
 
         for day in sorted_list_of_days:
             if day.mood_score < 3:
@@ -54,13 +54,14 @@ class DayStatsCalculator:
                 if len(temp_res) > len(result):
                     result = temp_res
                 temp_res = []
+        result += temp_res
         return result
 
     def maxSequenceHighMood(self):
         """high mood is defined as mood_score of 3, 4 or 5. greater than 2"""
         result = []
         temp_res = []
-        sorted_list_of_days = sorted(self.list_of_days, key=lambda x: x.date)
+        sorted_list_of_days = sorted(self.list_of_days, key=lambda date: datetime.strptime(date.date,"%Y-%m-%d"))
 
         for day in sorted_list_of_days:
             if day.mood_score > 2:
@@ -69,6 +70,7 @@ class DayStatsCalculator:
                 if len(temp_res) > len(result):
                     result = temp_res
                 temp_res = []
+        result += temp_res
         return result
 
     def clearList(self):
